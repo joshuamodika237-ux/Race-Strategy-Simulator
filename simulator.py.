@@ -1,0 +1,58 @@
+# Race Strategy Simulator 🏎️
+# Author: You :)
+# Simple simulator to compare race strategies in Formula 1
+
+# Tire data: average base lap time (sec), degradation per lap (sec), pit stop time (sec)
+tires = {
+    "Soft": {"base_time": 80, "degradation": 0.3, "pit_time": 20},
+    "Medium": {"base_time": 82, "degradation": 0.2, "pit_time": 20},
+    "Hard": {"base_time": 84, "degradation": 0.1, "pit_time": 20},
+}
+
+def simulate_race(total_laps, strategy):
+    """
+    Simulates a race given a total lap count and a strategy.
+    strategy = list of (tire_type, stint_laps)
+    Example: [("Soft", 15), ("Medium", 20), ("Hard", 15)]
+    """
+    total_time = 0
+    laps_done = 0
+    
+    for i, (tire, stint_laps) in enumerate(strategy):
+        base = tires[tire]["base_time"]
+        deg = tires[tire]["degradation"]
+        
+        for lap in range(stint_laps):
+            lap_time = base + (lap * deg)
+            total_time += lap_time
+            laps_done += 1
+        
+        # Add pit stop unless it's the last stint
+        if laps_done < total_laps:
+            total_time += tires[tire]["pit_time"]
+    
+    return total_time
+
+# Example race: 50 laps
+race_laps = 50
+
+# Define strategies
+strategy1 = [("Soft", 15), ("Medium", 20), ("Hard", 15)]  # 2-stop
+strategy2 = [("Medium", 25), ("Medium", 25)]              # 1-stop
+
+# Run simulations
+time1 = simulate_race(race_laps, strategy1)
+time2 = simulate_race(race_laps, strategy2)
+
+# Print results
+print("🏎 Race Strategy Simulator")
+print(f"Total Laps: {race_laps}\n")
+print("Strategy 1 (S-M-H):", round(time1, 2), "seconds")
+print("Strategy 2 (M-M):   ", round(time2, 2), "seconds")
+
+if time1 < time2:
+    print("\n✅ Strategy 1 is faster!")
+elif time2 < time1:
+    print("\n✅ Strategy 2 is faster!")
+else:
+    print("\n🤝 Both strategies are equal!")
